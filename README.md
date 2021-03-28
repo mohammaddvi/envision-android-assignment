@@ -17,13 +17,13 @@ Instructions on how to approach the UX of the Assignment is also provided on the
 1. For the OCR setup please use this POST endpoint: https://letsenvision.app/api/test/readDocument. 
 
 Example usage of the API endpoint: 
-`
-curl --location --request POST 'https://letsenvision.app/api/test/readDocument' \
+
+`curl --location --request POST 'https://letsenvision.app/api/test/readDocument' \
 --header 'Cookie: __cfduid=d97604b6c67574ccd048c013ffbee703a1614774197' \
---form 'photo=@/Users/johndoe/Desktop/Screenshot 2021-02-25 at 23.50.47.png'
+--form 'photo=@/Users/johndoe/Desktop/Screenshot 2021-02-25 at 23.50.47.png'`
 
 For more details on the API, here's the Postman [link](https://www.getpostman.com/collections/771c175ea7a0e2db34b9). 
-`
+
 
 2. Make sure that the app is entirely accessible using Talkback. If you're not familar with Android Accessibility, this is a good place to start: https://developer.android.com/codelabs/starting-android-accessibility
 
