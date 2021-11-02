@@ -8,7 +8,7 @@ Envision Library is a feature within the Envision app that users a lot after the
 ## Design
 
 
-You'll find the design for this feature through this figma link:  https://www.figma.com/file/m2AMO1eRV6SqWje63WmY2a/Envision-App-Assignments?node-id=91%3A1011
+You'll find the design for this feature through this figma link:  https://www.figma.com/file/mc8Ahvua2SU1sSpFLdchOp/%F0%9F%94%B5-Assignments?node-id=1%3A1011
 
 Instructions on how to approach the UX of the Assignment is also provided on the figma page itself. 
 
