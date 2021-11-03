@@ -33,9 +33,9 @@ For more details on the API, here's the Postman [link](https://www.getpostman.co
 
 ## Submission
 
-This repo should be forked and submitted with the Assignment. The assignment itself doesn't have a hard time limit and shouldn't take more than a few hours to implement. 
+This repo should be forked and submitted with the Assignment. The assignment itself has a deadline of 1 week, if you'd like more time then please let your contact at Envision know about it.
 
-Incase of any questions with regards to the assignment, please write to karthik@letsenvision.com 
+Incase of any questions with regards to the assignment, please write to kk@letsenvision.com 
 
 
 
