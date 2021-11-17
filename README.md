@@ -31,6 +31,8 @@ For more details on the API, here's the Postman [link](https://www.getpostman.co
 
 4. Library files will only have to be saved locally for the time being. 
 
+5. Please do the assignment to do in Kotlin.
+
 ## Submission
 
 This repo should be forked and submitted with the Assignment. The assignment itself has a deadline of 1 week, if you'd like more time then please let your contact at Envision know about it.
