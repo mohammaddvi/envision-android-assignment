@@ -1,21 +1,41 @@
 ext.versions = [
-        code      : 100000000,
-        name      : '1.0.0',
-        minSdk    : 21,
-        targetSdk : 31,
-        compileSdk: 31,
-        kotlin    : '1.5.20',
-        gradle    : '7.0.3',
-        junit     : '4.13.2',
-        appCompat : '1.4.0'
+        code             : 100000000,
+        name             : '1.0.0',
+        minSdk           : 21,
+        targetSdk        : 31,
+        compileSdk       : 31,
+        kotlin           : '1.5.31',
+        gradle           : '7.0.3',
+        junit            : '4.13.2',
+        appCompat        : '1.4.0',
+        compose          : '1.1.0-beta03',
+        composeTooling   : "1.1.0-beta03",
+        composeActivity  : "1.3.1",
+        composeNavigation: "2.4.0-beta01",
+        lifecycleCompose : "2.4.0"
 ]
+
 ext.gradlePlugins = [
         androidGradle: "com.android.tools.build:gradle:$versions.gradle",
         kotlinGradle : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
 ]
+
 ext.libs = [
         //Android
-        appCompat: "androidx.appcompat:appcompat:$versions.appCompat",
+        appCompat        : "androidx.appcompat:appcompat:$versions.appCompat",
         //Testing
-        junit    : "junit:junit:$versions.junit"
+        junit            : "junit:junit:$versions.junit",
+
+        //Compose
+        composeUi        : "androidx.compose.ui:ui:${versions.compose}",
+        composeRuntime   : "androidx.compose.runtime:runtime:${versions.compose}",
+        composeMaterial  : "androidx.compose.material:material:${versions.compose}",
+        composeCompiler  : "androidx.compose.compiler:compiler:${versions.compose}",
+        composeAnimation : "androidx.compose.animation:animation:${versions.compose}",
+        composeUiTooling : "androidx.compose.ui:ui-tooling:${versions.composeTooling}",
+        composeFoundation: "androidx.compose.foundation:foundation:${versions.compose}",
+        composeLifecycle : "androidx.lifecycle:lifecycle-viewmodel-compose:${versions.lifecycleCompose}",
+        composeLivedata  : "androidx.compose.runtime:runtime-livedata:${versions.compose}",
+        composeActivity  : "androidx.activity:activity-compose:${versions.composeActivity}",
+        composeNavigation: "androidx.navigation:navigation-compose:${versions.composeNavigation}",
 ]
