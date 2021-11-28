@@ -3,63 +3,14 @@ plugins {
     id 'kotlin-android'
 }
 apply from: rootProject.file('gradle-script/dependencies.gradle')
-android {
-    compileSdk versions.compileSdk
-
-    defaultConfig {
-        minSdk versions.minSdk
-        targetSdk versions.targetSdk
-        versionCode versions.code
-        versionName versions.name
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    buildFeatures {
-        compose true
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    composeOptions {
-        kotlinCompilerVersion versions.kotlin
-        kotlinCompilerExtensionVersion versions.compose
-    }
-}
+apply from: rootProject.file('gradle-script/compose.gradle')
 
 dependencies {
-
-    implementation libs.appCompat
-    implementation libs.composeUi
-    implementation libs.composeRuntime
-    implementation libs.composeMaterial
-    implementation libs.composeCompiler
-    implementation libs.composeAnimation
-    implementation libs.composeUiTooling
-    implementation libs.composeFoundation
-    implementation libs.composeLifecycle
-    implementation libs.composeLivedata
-    implementation libs.composeActivity
-    implementation libs.composeNavigation
+    implementation project(":core")
+    implementation libs.camera2
+    implementation libs.cameraLifecycle
+    implementation libs.cameraView
+    implementation libs.accompanistPager
+    implementation libs.accompanistPagerIndicator
     testImplementation libs.junit
-
-}
-
-repositories {
-    google()
-    mavenCentral()
 }
