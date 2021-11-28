@@ -1,0 +1,21 @@
+ext.versions = [
+        code      : 100000000,
+        name      : '1.0.0',
+        minSdk    : 21,
+        targetSdk : 31,
+        compileSdk: 31,
+        kotlin    : '1.5.20',
+        gradle    : '7.0.3',
+        junit     : '4.13.2',
+        appCompat : '1.4.0'
+]
+ext.gradlePlugins = [
+        androidGradle: "com.android.tools.build:gradle:$versions.gradle",
+        kotlinGradle : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+]
+ext.libs = [
+        //Android
+        appCompat: "androidx.appcompat:appcompat:$versions.appCompat",
+        //Testing
+        junit    : "junit:junit:$versions.junit"
+]
