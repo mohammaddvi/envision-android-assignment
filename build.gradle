@@ -7,5 +7,6 @@ buildscript {
     dependencies {
         classpath gradlePlugins.kotlinGradle
         classpath gradlePlugins.androidGradle
+        classpath gradlePlugins.kotlinAndroidExtensions
     }
 }

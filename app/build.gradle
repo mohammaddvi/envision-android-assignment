@@ -3,14 +3,11 @@ plugins {
     id 'kotlin-android'
 }
 apply from: rootProject.file('gradle-script/dependencies.gradle')
-apply from: rootProject.file('gradle-script/compose.gradle')
+apply from: rootProject.file('gradle-script/core.gradle')
 
 dependencies {
     implementation project(":core")
     implementation libs.camera2
     implementation libs.cameraLifecycle
     implementation libs.cameraView
-    implementation libs.accompanistPager
-    implementation libs.accompanistPagerIndicator
-    testImplementation libs.junit
 }

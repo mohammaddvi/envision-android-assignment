@@ -15,7 +15,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.envision.assignment.view.component.RequestPermissionToCamera
 import com.envision.assignment.view.component.cameraPreview
 import com.envision.assignment.view.component.takePhoto
+import com.envision.assignment.viewmodel.CaptureViewModel
 import com.envision.core.theme.EnvisionTheme
+//import org.koin.androidx.compose.getViewModel
 
 enum class CaptureScreenStates {
     Permission,
@@ -26,6 +28,7 @@ enum class CaptureScreenStates {
 
 @Composable
 fun CaptureScreen() {
+//    val viewModel = getViewModel<CaptureViewModel>()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
@@ -33,7 +36,11 @@ fun CaptureScreen() {
         RequestPermissionToCamera()
         val cameraPreview = cameraPreview(lifecycleOwner, context, cameraProviderFuture)
         AndroidView(factory = { cameraPreview.first }, modifier = Modifier.weight(1f))
-        Button(onClick = { takePhoto(cameraPreview.second, context, {}, {}) }) {
+        Button(onClick = {
+            takePhoto(cameraPreview.second, context, {}, {
+//                viewModel.uploadFile(it,context)
+            })
+        }) {
             Text(text = "Capture")
         }
     }

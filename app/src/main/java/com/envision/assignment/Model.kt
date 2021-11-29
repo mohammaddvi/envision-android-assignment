@@ -18,3 +18,7 @@ sealed class TabItem(var index: Int, var title: String, var screen: @Composable 
     object Capture : TabItem(index = 0, title = "Capture", screen = { CaptureScreen() })
     object Library : TabItem(index = 1, title = "Library", screen = { LibraryScreen() })
 }
+
+data class OcrProcessedModel(
+    val paragraphs: List<String>
+)

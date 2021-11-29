@@ -2,7 +2,7 @@
 apply from: rootProject.file('gradle-script/dependencies.gradle')
 android {
     compileSdk versions.compileSdk
-
+    buildToolsVersion versions.buildTools
     defaultConfig {
         minSdk versions.minSdk
         targetSdk versions.targetSdk
@@ -17,8 +17,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            minifyEnabled false
+            buildConfigField "String", "BASE_URL", "\"https://letsenvision.app/\""
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
+            buildConfigField "String", "BASE_URL", "\"https://letsenvision.app/\""
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -55,13 +61,25 @@ dependencies {
     implementation libs.composeLifecycle
     implementation libs.composeLivedata
     implementation libs.composeActivity
-    implementation libs.composeNavigation
     implementation libs.accompanistInsetUI
     implementation libs.accompanistPermission
-
+    implementation libs.gson
+    implementation libs.okhttp
+    implementation libs.retrofit
+    implementation libs.retrofitGsonConverter
+    implementation libs.loggingInterceptor
+    implementation libs.accompanistPager
+    implementation libs.accompanistPagerIndicator
+    implementation libs.coreKtx
+    implementation libs.coroutines
+    implementation libs.coroutinesAndroid
+    implementation libs.liveDataKtx
 }
 
 repositories {
     google()
     mavenCentral()
+    maven {
+        url 'https://maven.google.com'
+    }
 }

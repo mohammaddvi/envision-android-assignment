@@ -4,6 +4,7 @@ ext.versions = [
         minSdk               : 21,
         targetSdk            : 31,
         compileSdk           : 31,
+        buildTools           : '30.0.2',
         kotlin               : "1.5.31",
         gradle               : "7.0.3",
         junit                : "4.13.2",
@@ -17,46 +18,83 @@ ext.versions = [
         cameraxView          : "1.0.0-alpha31",
         accompanistPager     : "0.19.0",
         accompanist          : "0.16.1",
-        accompanistPermission: "0.18.0"
+        accompanistPermission: "0.18.0",
+        retrofit             : '2.6.4',
+        retrofitCoroutines   : '0.9.3-SNAPSHOT',
+        gson                 : '2.8.1',
+        okhttp               : '3.12.1',
+        okhttpLogging        : '3.5.0',
+        koin                 : '3.1.4',
+        androidXFragment     : '1.3.4',
+        androidArchitecture  : '2.4.0',
+
+        coreKtx              : '1.6.0',
+        liveDataKtx          : "2.2.0-beta01",
+
+        coroutines           : '1.4.0',
+
+        coroutinesTest       : "1.4.3",
 ]
 
 ext.gradlePlugins = [
-        androidGradle: "com.android.tools.build:gradle:$versions.gradle",
-        kotlinGradle : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+        androidGradle          : "com.android.tools.build:gradle:$versions.gradle",
+        kotlinGradle           : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin",
+        kotlinAndroidExtensions: "org.jetbrains.kotlin:kotlin-android-extensions:$versions.kotlin",
 ]
 
 ext.libs = [
         //Android
-        appCompat                : "androidx.appcompat:appcompat:$versions.appCompat",
+        appCompat                     : "androidx.appcompat:appcompat:$versions.appCompat",
 
         //Testing
-        junit                    : "junit:junit:$versions.junit",
+        junit                         : "junit:junit:$versions.junit",
 
         //Compose
-        composeUi                : "androidx.compose.ui:ui:${versions.compose}",
-        composeRuntime           : "androidx.compose.runtime:runtime:${versions.compose}",
-        composeMaterial          : "androidx.compose.material:material:${versions.compose}",
-        composeCompiler          : "androidx.compose.compiler:compiler:${versions.compose}",
-        composeAnimation         : "androidx.compose.animation:animation:${versions.compose}",
-        composeUiTooling         : "androidx.compose.ui:ui-tooling:${versions.composeTooling}",
-        composeFoundation        : "androidx.compose.foundation:foundation:${versions.compose}",
-        composeLifecycle         : "androidx.lifecycle:lifecycle-viewmodel-compose:${versions.lifecycleCompose}",
-        composeLivedata          : "androidx.compose.runtime:runtime-livedata:${versions.compose}",
-        composeActivity          : "androidx.activity:activity-compose:${versions.composeActivity}",
-        composeNavigation        : "androidx.navigation:navigation-compose:${versions.composeNavigation}",
-        accompanistPager         : "com.google.accompanist:accompanist-pager:${versions.accompanistPager}",
-        accompanistPagerIndicator: "com.google.accompanist:accompanist-pager-indicators:${versions.accompanistPager}",
-        accompanistInsetUI       : "com.google.accompanist:accompanist-insets-ui:${versions.accompanist}",
-        accompanistPermission    : "com.google.accompanist:accompanist-permissions:${versions.accompanistPermission}",
-
+        composeUi                     : "androidx.compose.ui:ui:${versions.compose}",
+        composeRuntime                : "androidx.compose.runtime:runtime:${versions.compose}",
+        composeMaterial               : "androidx.compose.material:material:${versions.compose}",
+        composeCompiler               : "androidx.compose.compiler:compiler:${versions.compose}",
+        composeAnimation              : "androidx.compose.animation:animation:${versions.compose}",
+        composeUiTooling              : "androidx.compose.ui:ui-tooling:${versions.composeTooling}",
+        composeFoundation             : "androidx.compose.foundation:foundation:${versions.compose}",
+        composeLifecycle              : "androidx.lifecycle:lifecycle-viewmodel-compose:${versions.lifecycleCompose}",
+        composeLivedata               : "androidx.compose.runtime:runtime-livedata:${versions.compose}",
+        composeActivity               : "androidx.activity:activity-compose:${versions.composeActivity}",
+        composeNavigation             : "androidx.navigation:navigation-compose:${versions.composeNavigation}",
+        accompanistPager              : "com.google.accompanist:accompanist-pager:${versions.accompanistPager}",
+        accompanistPagerIndicator     : "com.google.accompanist:accompanist-pager-indicators:${versions.accompanistPager}",
+        accompanistInsetUI            : "com.google.accompanist:accompanist-insets-ui:${versions.accompanist}",
+        accompanistPermission         : "com.google.accompanist:accompanist-permissions:${versions.accompanistPermission}",
 
         //CameraX
-        cameraCore               : "androidx.camera:camera-core:${versions.camerax}",
-        camera2                  : "androidx.camera:camera-camera2:${versions.camerax}",
-        // If you want to additionally use the CameraX Lifecycle library
-        cameraLifecycle          : "androidx.camera:camera-lifecycle:${versions.camerax}",
-        // If you want to additionally use the CameraX View class
-        cameraView               : "androidx.camera:camera-view:${versions.cameraxView}",
-        // If you want to additionally use the CameraX Extensions library
-        cameraExtension          : "androidx.camera:camera-extensions:${versions.cameraxView}"
+        cameraCore                    : "androidx.camera:camera-core:${versions.camerax}",
+        camera2                       : "androidx.camera:camera-camera2:${versions.camerax}",
+        cameraLifecycle               : "androidx.camera:camera-lifecycle:${versions.camerax}",
+        cameraView                    : "androidx.camera:camera-view:${versions.cameraxView}",
+
+        //NETWORK
+        gson                          : "com.google.code.gson:gson:$versions.gson",
+        okhttp                        : "com.squareup.okhttp3:okhttp:$versions.okhttp",
+        retrofit                      : "com.squareup.retrofit2:retrofit:$versions.retrofit",
+        retrofitGsonConverter         : "com.squareup.retrofit2:converter-gson:$versions.retrofit",
+        loggingInterceptor            : "com.squareup.okhttp3:logging-interceptor:$versions.okhttpLogging",
+
+        //DI
+        koinTest                      : "io.insert-koin:koin-test:$versions.koin",
+        koinAndroid                   : "io.insert-koin:koin-android:$versions.koin",
+        koinCompose                   : "io.insert-koin:koin-androidx-compose:$versions.koin",
+
+        androidXFragment              : "androidx.fragment:fragment-ktx:$versions.androidXFragment",
+
+        coreKtx                       : "androidx.core:core-ktx:${versions.coreKtx}",
+        kotlin                        : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin",
+        liveDataKtx                   : "androidx.lifecycle:lifecycle-livedata-ktx:${versions.liveDataKtx}",
+        kotlinAndroidExtensionsRuntime: "org.jetbrains.kotlin:kotlin-android-extensions-runtime:$versions.kotlin",
+        //Coroutines
+        coroutines                    : "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines",
+        coroutinesAndroid             : "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines",
+        coroutinesTest                : "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutinesTest",
+        lifeCycleViewModel            : "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidArchitecture",
+        lifeCycleCompiler             : "androidx.lifecycle:lifecycle-compiler:$versions.androidArchitecture",
+        lifeCycleRuntime              : "androidx.lifecycle:lifecycle-runtime:$versions.androidArchitecture",
 ]
