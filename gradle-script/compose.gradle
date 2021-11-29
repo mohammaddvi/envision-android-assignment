@@ -57,6 +57,7 @@ dependencies {
     implementation libs.composeActivity
     implementation libs.composeNavigation
     implementation libs.accompanistInsetUI
+    implementation libs.accompanistPermission
 
 }
 

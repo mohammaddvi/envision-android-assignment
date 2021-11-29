@@ -7,6 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionRequired
+import com.google.accompanist.permissions.rememberPermissionState
 
 val LocalActivity = staticCompositionLocalOf<Activity?> {
     null
@@ -26,4 +29,21 @@ private fun Context.getActivity(): Activity? {
         is ContextWrapper -> baseContext.getActivity()
         else -> null
     }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun Permission(
+    permission: String = android.Manifest.permission.CAMERA,
+    permissionNotAvailableContent: @Composable () -> Unit = {},
+    permissionNotGrantedContent: @Composable () -> Unit = {},
+    content: @Composable () -> Unit = {}
+) {
+    val permissionState = rememberPermissionState(permission)
+    PermissionRequired(
+        permissionState = permissionState,
+        permissionNotGrantedContent = permissionNotGrantedContent,
+        permissionNotAvailableContent = permissionNotAvailableContent,
+        content = content
+    )
 }
