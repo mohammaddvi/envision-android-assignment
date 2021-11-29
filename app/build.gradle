@@ -10,4 +10,6 @@ dependencies {
     implementation libs.camera2
     implementation libs.cameraLifecycle
     implementation libs.cameraView
+    implementation libs.koinCore
+    implementation libs.koinCompose
 }

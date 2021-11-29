@@ -1,17 +1,18 @@
 package com.envision.assignment
 
 import android.app.Application
-//import org.koin.core.context.GlobalContext
+import org.koin.core.context.GlobalContext
+import org.koin.core.context.startKoin
 
 class EnvisionApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-//        GlobalContext.startKoin {
-//            modules(
-//                listOf(
-//                    envisionModule(),
-//                )
-//            )
-//        }
+        startKoin {
+            modules(
+                listOf(
+                    envisionModule(),
+                )
+            )
+        }
     }
 }

@@ -56,6 +56,7 @@ dependencies {
     implementation libs.composeMaterial
     implementation libs.composeCompiler
     implementation libs.composeAnimation
+    implementation libs.composeNavigation
     implementation libs.composeUiTooling
     implementation libs.composeFoundation
     implementation libs.composeLifecycle
@@ -74,6 +75,7 @@ dependencies {
     implementation libs.coroutines
     implementation libs.coroutinesAndroid
     implementation libs.liveDataKtx
+    implementation libs.koinCompose
 }
 
 repositories {
