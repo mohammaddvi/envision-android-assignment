@@ -1,4 +1,4 @@
-package com.envision.assignment.home.view.compose
+package com.envision.assignment.view.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,9 +48,14 @@ fun TabContainer(
 
 @ExperimentalPagerApi
 @Composable
-fun TabPager(modifier: Modifier = Modifier, tabItems: List<TabItem>, pagerState: PagerState) {
+fun TabPager(
+    modifier: Modifier = Modifier,
+    tabItems: List<TabItem>,
+    pagerState: PagerState,
+    onScreenUpdate: @Composable (Int) -> Unit
+) {
     HorizontalPager(modifier = modifier, count = tabItems.size, state = pagerState) { index ->
-        tabItems[index].screen()
+        onScreenUpdate(index)
     }
 }
 
@@ -64,7 +69,7 @@ fun TabPreview() {
                 selectedTabIndex = 1,
                 tabsItems = tabsData,
                 onPageSelected = {})
-            TabPager(tabItems = tabsData, pagerState = rememberPagerState())
+            TabPager(tabItems = tabsData, pagerState = rememberPagerState()){}
         }
     }
 }

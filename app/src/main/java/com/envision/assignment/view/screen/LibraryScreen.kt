@@ -10,16 +10,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.envision.assignment.LibraryItem
+import com.envision.assignment.viewmodel.LibraryViewModel
+import com.envision.core.extension.state
 import com.envision.core.theme.EnvisionTheme
 import com.envision.core.theme.graySeparator
-
-
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun LibraryScreen(modifier: Modifier = Modifier, libraryItems: List<LibraryItem>? = null) {
+    val libraryViewModel : LibraryViewModel = getViewModel()
+    val libraryState = libraryViewModel.state()
     LazyColumn(modifier = modifier, content = {
         libraryItems?.let {
-            items(libraryItems) { item ->
+            items(libraryState.value.documents) { item ->
                 Column {
                     Row(modifier = Modifier.padding(16.dp)) {
                         Text(text = item.date)
@@ -39,18 +42,18 @@ fun LibraryScreen(modifier: Modifier = Modifier, libraryItems: List<LibraryItem>
     })
 }
 
-@Preview
-@Composable
-fun LibraryScreenPreview() {
-    EnvisionTheme {
-        LibraryScreen(
-            libraryItems =
-            listOf(
-                LibraryItem("22/02/21", "15:32"),
-                LibraryItem("22/02/21", "13:32"),
-                LibraryItem("22/01/21", "15:32"),
-                LibraryItem("04/01/21", "10:40"),
-            )
-        )
-    }
-}
+// @Preview
+// @Composable
+// fun LibraryScreenPreview() {
+//     EnvisionTheme {
+//         LibraryScreen(
+//             libraryItems =
+//             listOf(
+//                 LibraryItem("22/02/21", "15:32"),
+//                 LibraryItem("22/02/21", "13:32"),
+//                 LibraryItem("22/01/21", "15:32"),
+//                 LibraryItem("04/01/21", "10:40"),
+//             )
+//         )
+//     }
+// }

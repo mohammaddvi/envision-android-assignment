@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
 }
 apply from: rootProject.file('gradle-script/dependencies.gradle')
 apply from: rootProject.file('gradle-script/core.gradle')
@@ -13,8 +15,19 @@ dependencies {
     implementation libs.koinCore
     implementation libs.koinCompose
     implementation libs.mockk
-    implementation libs.coroutinesTest
+//    implementation libs.coroutinesTest
     implementation libs.junit
     implementation libs.kotlinTest
     implementation libs.archTesting
+    implementation libs.room
+//    implementation libs.roomAnnorationProcessor
+    implementation 'androidx.room:room-common:2.3.0'
+//    implementation 'androidx.room:room-ktx:2.3.0'
+//    annotationProcessor "androidx.room:room-compiler:2.3.0"
+//    kapt "android.arch.persistence.room:compiler:1.1.1"
+    def room = "2.3.0"
+    implementation "androidx.room:room-runtime:$room"
+    implementation "androidx.room:room-ktx:$room"
+    kapt "androidx.room:room-compiler:$room"
+
 }

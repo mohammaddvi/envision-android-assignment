@@ -54,10 +54,8 @@ fun takePhoto(
         ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageSavedCallback {
             override fun onError(exc: ImageCaptureException) = onError(exc)
-
             override fun onImageSaved(output: ImageCapture.OutputFileResults) =
                 onImageSaved(Uri.fromFile(getOutputDirectory(context)))
-
         })
 }
 

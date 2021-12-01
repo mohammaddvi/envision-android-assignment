@@ -1,8 +1,12 @@
 package com.envision.assignment
 
-import androidx.compose.runtime.Composable
-import com.envision.assignment.view.screen.CaptureScreen
-import com.envision.assignment.view.screen.LibraryScreen
+sealed class CaptureScreenState {
+    object Permission : CaptureScreenState()
+    object Processing : CaptureScreenState()
+    object Capturing : CaptureScreenState()
+    data class ShowingResult(val result: String) : CaptureScreenState()
+    data class Error(val error: String) : CaptureScreenState()
+}
 
 val tabsData = listOf(
     TabItem.Capture,
@@ -11,14 +15,16 @@ val tabsData = listOf(
 
 data class LibraryItem(
     val date: String,
-    val time: String
+    val time: String,
+    val content: String
 )
 
-sealed class TabItem(var index: Int, var title: String, var screen: @Composable () -> Unit) {
-    object Capture : TabItem(index = 0, title = "Capture", screen = { CaptureScreen() })
-    object Library : TabItem(index = 1, title = "Library", screen = { LibraryScreen() })
+sealed class TabItem(var index: Int, var title: String) {
+    object Capture : TabItem(index = 0, title = "Capture")
+    object Library : TabItem(index = 1, title = "Library")
 }
 
 data class OcrProcessedModel(
     val paragraphs: List<String>
 )
+

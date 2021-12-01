@@ -9,20 +9,34 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.envision.assignment.view.screen.MainScreen
+import com.envision.assignment.viewmodel.CaptureViewModel
+import com.envision.assignment.viewmodel.LibraryViewModel
+import com.envision.core.extension.state
 import com.envision.core.theme.EnvisionTheme
 import com.google.accompanist.insets.statusBarsPadding
+import org.koin.androidx.compose.getViewModel
 
 class MainActivity : AppCompatActivity() {
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val captureViewModel: CaptureViewModel = getViewModel()
+            val libraryViewModel: LibraryViewModel = getViewModel()
+            val captureState = captureViewModel.state()
+            val libraryState = libraryViewModel.state()
             EnvisionTheme {
                 Surface(Modifier.fillMaxSize(), color = EnvisionTheme.colors.background) {
                     Column(Modifier.fillMaxSize()) {
                         MainScreen(modifier = Modifier
                             .fillMaxSize()
-                            .statusBarsPadding())
+                            .statusBarsPadding(),
+                            captureScreenState = captureState.value.captureScreenState,
+                            libraryState = libraryState.value.documents,
+                            onImageSaved = { captureViewModel.onImageSaved(it) },
+                            onImageCaptureException = { captureViewModel.onImageCaptureException(it) },
+                            onPermissionGranted = { captureViewModel.onPermissionGranted() },
+                            onPermissionDenied = { captureViewModel.onPermissionDenied() })
                     }
                 }
             }

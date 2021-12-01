@@ -1,10 +1,10 @@
 package com.envision.assignment.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.envision.assignment.CaptureScreenState
 import com.envision.assignment.usecase.ConcatParagraphsUseCase
 import com.envision.assignment.usecase.UploadFileUseCase
 import com.envision.core.errorhandling.ErrorParserImpl
-import com.envision.core.utils.LoadableData
 import com.envision.core.utils.TestUriBuilderWrapper
 import com.envision.core.utils.createTestCoroutineDispatcherProvider
 import io.mockk.MockKAnnotations
@@ -62,12 +62,11 @@ class CaptureViewModelTest {
         unmockkAll()
     }
 
-
     @Test
     fun `when user has done nothing yet then view model state should to not loaded`() =
         testCoroutineScope.runBlockingTest {
             val viewModel = createCaptureViewModel()
-            assertEquals(LoadableData.NotLoaded, viewModel.currentState.ocrResult)
+            assertEquals(CaptureScreenState.Capturing, viewModel.currentState.captureScreenState)
         }
 
     @Test
@@ -81,7 +80,7 @@ class CaptureViewModelTest {
             }
             val viewModel = createCaptureViewModel()
             viewModel.onImageSaved(uriBuilderWrapper.uriCreator())
-            assertEquals(LoadableData.Loading, viewModel.currentState.ocrResult)
+            assertEquals(CaptureScreenState.Processing, viewModel.currentState.captureScreenState)
         }
 
     @Test
@@ -103,7 +102,10 @@ class CaptureViewModelTest {
             val viewModel = createCaptureViewModel()
             viewModel.onImageSaved(uriBuilderWrapper.uriCreator())
             delay(1000)
-            assertEquals(LoadableData.Loaded(ocrResultConcated), viewModel.currentState.ocrResult)
+            assertEquals(
+                CaptureScreenState.ShowingResult(ocrResultConcated),
+                viewModel.currentState.captureScreenState
+            )
         }
 
     @Test
@@ -121,7 +123,6 @@ class CaptureViewModelTest {
 
             val viewModel = createCaptureViewModel()
             viewModel.onImageSaved(uriBuilderWrapper.uriCreator())
-            assertTrue(viewModel.currentState.ocrResult is LoadableData.Failed)
+            assertTrue(viewModel.currentState.captureScreenState is CaptureScreenState.Error)
         }
-
 }

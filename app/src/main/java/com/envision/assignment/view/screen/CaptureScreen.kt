@@ -1,10 +1,16 @@
 package com.envision.assignment.view.screen
 
+import android.net.Uri
+import androidx.camera.core.ImageCaptureException
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -18,39 +24,47 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.envision.assignment.CaptureScreenState
 import com.envision.assignment.view.component.RequestPermissionToCamera
 import com.envision.assignment.view.component.cameraPreview
 import com.envision.assignment.view.component.takePhoto
-import com.envision.assignment.viewmodel.CaptureViewModel
-import com.envision.core.extension.state
 import com.envision.core.theme.EnvisionTheme
 import com.envision.core.theme.black
-import com.envision.core.utils.LoadableData
-import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun CaptureScreen() {
-    val viewModel = getViewModel<CaptureViewModel>()
-    val captureState = viewModel.state()
+fun CaptureScreen(
+    captureScreenState: CaptureScreenState,
+    onImageSaved: (Uri) -> Unit,
+    onImageCaptureException: (ImageCaptureException) -> Unit,
+    onPermissionGranted: () -> Unit,
+    onPermissionDenied: () -> Unit
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
     val cameraPreview = cameraPreview(lifecycleOwner, context, cameraProviderFuture)
     val onCaptureClicked = {
-        takePhoto(cameraPreview.second, context, { viewModel.onImageCaptureException(it) }, {
-            viewModel.onImageSaved(it)
+        takePhoto(cameraPreview.second, context, { onImageCaptureException(it) }, {
+            onImageSaved(it)
         })
     }
     Box(modifier = Modifier.fillMaxSize()) {
-        RequestPermissionToCamera()
-
-        when (captureState.value.ocrResult) {
-            is LoadableData.Loading -> ProcessingState(cameraPreview.first)
-            is LoadableData.Loaded -> ShowingResultState(captureState.value.ocrResult.data!!)
-            is LoadableData.NotLoaded -> CapturingState(cameraPreview.first, onCaptureClicked)
-            is LoadableData.Failed -> CapturingState(cameraPreview.first, onCaptureClicked)
+        when (captureScreenState) {
+            is CaptureScreenState.Permission -> PermissionState(
+                onPermissionGranted,
+                onPermissionDenied
+            )
+            is CaptureScreenState.Processing -> ProcessingState(cameraPreview.first)
+            is CaptureScreenState.ShowingResult -> ShowingResultState(captureScreenState.result)
+            is CaptureScreenState.Capturing -> CapturingState(cameraPreview.first, onCaptureClicked)
+            is CaptureScreenState.Error -> CapturingState(cameraPreview.first, onCaptureClicked)
         }
     }
+}
+
+@Composable
+private fun PermissionState(onPermissionGranted: () -> Unit, onPermissionDenied: () -> Unit) {
+    RequestPermissionToCamera(onPermissionGranted, onPermissionDenied)
 }
 
 @Composable
@@ -83,7 +97,6 @@ fun ShowingResultState(ocrResult: String) {
     }
 }
 
-
 @Composable
 fun CapturingState(previewView: PreviewView, onCaptureClicked: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -111,7 +124,6 @@ fun CapturingState(previewView: PreviewView, onCaptureClicked: () -> Unit) {
         }
     }
 }
-
 
 @Composable
 fun ProcessingState(previewView: PreviewView) {
