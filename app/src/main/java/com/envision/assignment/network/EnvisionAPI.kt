@@ -9,5 +9,5 @@ import retrofit2.http.Part
 interface EnvisionAPI {
     @Multipart
     @POST("api/test/readDocument")
-    suspend fun requestOCR(@Part("photo") photo: RequestBody): OcrProcessingResponseDto
+    suspend fun requestOCR(@Part photo: MultipartBody.Part): OcrProcessingResponseDto
 }

@@ -8,6 +8,6 @@ import okhttp3.RequestBody
 import retrofit2.http.Multipart
 
 class RemoteEnvisionRepository(private val envisionAPI: EnvisionAPI) : EnvisionRepository {
-    override suspend fun requestOCR(photoFile: RequestBody): OcrProcessedModel =
+    override suspend fun requestOCR(photoFile: MultipartBody.Part): OcrProcessedModel =
         envisionAPI.requestOCR(photoFile).toOcrProcessedModel()
 }

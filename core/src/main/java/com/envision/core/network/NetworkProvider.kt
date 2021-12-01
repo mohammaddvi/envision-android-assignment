@@ -7,8 +7,18 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
+fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    val logging = HttpLoggingInterceptor()
+    logging.level = HttpLoggingInterceptor.Level.BODY
+    return OkHttpClient.Builder()
+        .readTimeout(60, TimeUnit.SECONDS)
+        .addInterceptor(logging)
+        .addInterceptor(authInterceptor)
+        .build()
+}
 fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
     Retrofit.Builder()
         .baseUrl(BuildConfig.BASE_URL)
@@ -18,9 +28,3 @@ fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
 var gson: Gson = GsonBuilder()
     .setLenient()
     .create()
-
-fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
-    val logging = HttpLoggingInterceptor()
-    logging.level = HttpLoggingInterceptor.Level.BODY
-    return OkHttpClient().newBuilder().addInterceptor(authInterceptor).addInterceptor(logging).build()
-}

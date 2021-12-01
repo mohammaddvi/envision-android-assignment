@@ -1,11 +1,12 @@
 package com.envision.assignment.viewmodel
 
-import android.content.Context
 import android.net.Uri
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.util.Log
-import com.envision.assignment.repository.EnvisionRepository
+import androidx.camera.core.ImageCaptureException
+import com.envision.assignment.usecase.ConcatParagraphsUseCase
+import com.envision.assignment.usecase.UploadFileUseCase
+import com.envision.core.coroutine.CoroutineDispatcherProvider
+import com.envision.core.errorhandling.ErrorParser
+import com.envision.core.utils.LoadableData
 import com.envision.core.viewmodel.EnvisionStatefulViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType
@@ -14,85 +15,56 @@ import okhttp3.RequestBody
 import java.io.File
 
 
-class CaptureViewModel(private val uploadFileUseCase: EnvisionRepository) :
-    EnvisionStatefulViewModel<CaptureViewModel.State>(State()) {
+class CaptureViewModel(
+    private val uploadFileUseCase: UploadFileUseCase,
+    private val concatParagraphsUseCase: ConcatParagraphsUseCase,
+    private val errorParser: ErrorParser,
+    coroutineDispatcherProvider: CoroutineDispatcherProvider,
+) :
+    EnvisionStatefulViewModel<CaptureViewModel.State>(State(), coroutineDispatcherProvider) {
     data class State(
-        val alaki: String = ""
+        val ocrResult: LoadableData<String> = LoadableData.NotLoaded,
+        val capturing: LoadableData<String> = LoadableData.NotLoaded
     )
 
+    fun onImageSaved(uri: Uri) {
+        applyState {
+            copy(capturing = LoadableData.Loaded("success"))
+        }
+        uploadFile(preparingImageFile(uri))
+    }
 
-    fun uploadFile(uri: Uri,context: Context) {
+    fun onImageCaptureException(exception: ImageCaptureException) {
+        applyState {
+            copy(capturing = LoadableData.Failed(exception, exception.message))
+        }
+    }
 
-        val file: File =  File(uri.path!!)
-        val requestFile = RequestBody.create(MediaType.parse("image/*"), file)
-//        val file: File = com.envision.core.utils.FileUtil.getFile(context, uri)
-//        val description: RequestBody = RequestBody.create(
-//            MultipartBody.FORM, file
-//        )
+    private fun uploadFile(file: MultipartBody.Part) {
         launch {
+            applyState {
+                copy(ocrResult = LoadableData.Loading)
+            }
             runCatching {
-
                 onIo {
-                    uploadFileUseCase.requestOCR(requestFile)
+                    uploadFileUseCase.execute(file)
                 }
             }.fold({
-                Log.d("mogger", "yey")
+                val result = concatParagraphsUseCase.execute(it.paragraphs)
+                applyState {
+                    copy(ocrResult = LoadableData.Loaded(result))
+                }
             }, {
-                Log.d("mogger", "failed cause ${it.message}")
+                applyState {
+                    copy(ocrResult = LoadableData.Failed(it, errorParser.parse(it)))
+                }
             })
         }
-
     }
-    fun getFileFromUri(uri: Uri,context: Context): File? {
-        if (uri.path == null) {
-            return null
-        }
-        var realPath = String()
-        val databaseUri: Uri
-        val selection: String?
-        val selectionArgs: Array<String>?
-        if (uri.path!!.contains("/document/image:")) {
-            databaseUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            selection = "_id=?"
-            selectionArgs = arrayOf(DocumentsContract.getDocumentId(uri).split(":")[1])
-        } else {
-            databaseUri = uri
-            selection = null
-            selectionArgs = null
-        }
-        try {
-            val column = "_data"
-            val projection = arrayOf(column)
-            val cursor = context.contentResolver.query(
-                databaseUri,
-                projection,
-                selection,
-                selectionArgs,
-                null
-            )
-            cursor?.let {
-                if (it.moveToFirst()) {
-                    val columnIndex = cursor.getColumnIndexOrThrow(column)
-                    realPath = cursor.getString(columnIndex)
-                }
-                cursor.close()
-            }
-        } catch (e: Exception) {
-            Log.i("GetFileUri Exception:", e.message ?: "")
-        }
-        val path = if (realPath.isNotEmpty()) realPath else {
-            when {
-                uri.path!!.contains("/document/raw:") -> uri.path!!.replace(
-                    "/document/raw:",
-                    ""
-                )
-                uri.path!!.contains("/document/primary:") -> uri.path!!.replace(
-                    "/document/primary:",
-                    "/storage/emulated/0/"
-                )
-                else -> return null
-            }
-        }
-        return File(path)
+
+    private fun preparingImageFile(uri: Uri): MultipartBody.Part {
+        val requestFile: RequestBody =
+            RequestBody.create(MediaType.parse("multipart/form-data"), File(uri.path!!))
+        return MultipartBody.Part.createFormData("photo", "uploadFile", requestFile)
     }
 }

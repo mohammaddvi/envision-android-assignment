@@ -6,5 +6,5 @@ import okhttp3.RequestBody
 import retrofit2.http.Multipart
 
 interface EnvisionRepository {
-    suspend fun requestOCR(photoFile : RequestBody): OcrProcessedModel
+    suspend fun requestOCR(photoFile : MultipartBody.Part): OcrProcessedModel
 }

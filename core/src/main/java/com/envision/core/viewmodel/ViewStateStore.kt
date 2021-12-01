@@ -1,12 +1,11 @@
 package com.envision.core.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
-class LiveDataStore<T : Any>(
-    initialState: T,
-) {
+class ViewStateStore<T : Any>(initialState: T) {
     var state = initialState
         set(value) {
             field = value
@@ -15,10 +14,15 @@ class LiveDataStore<T : Any>(
     private val internalLiveData = MutableLiveData<T>().apply {
         value = initialState
     }
-    val currentValue = internalLiveData.value
-    fun observe(owner: LifecycleOwner, observer: (T) -> Unit) {
-        internalLiveData.observe(owner, observer)
-    }
+
+    val liveData = internalLiveData as LiveData<T>
+
+    fun observe(owner: LifecycleOwner, observer: (T) -> Unit) =
+        internalLiveData.observe(owner, { observer(it!!) })
+
     fun observeForever(observer: Observer<T>) =
         internalLiveData.observeForever(observer)
+
+    fun removeObserver(observer: Observer<T>) = internalLiveData.removeObserver(observer)
+
 }

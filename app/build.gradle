@@ -12,4 +12,9 @@ dependencies {
     implementation libs.cameraView
     implementation libs.koinCore
     implementation libs.koinCompose
+    implementation libs.mockk
+    implementation libs.coroutinesTest
+    implementation libs.junit
+    implementation libs.kotlinTest
+    implementation libs.archTesting
 }

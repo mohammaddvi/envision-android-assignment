@@ -5,7 +5,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 class UploadFileUseCase(private val envisionRepository: EnvisionRepository) {
-    suspend fun execute(requestBody: RequestBody){
+    suspend fun execute(requestBody: MultipartBody.Part)=
         envisionRepository.requestOCR(requestBody)
-    }
 }
