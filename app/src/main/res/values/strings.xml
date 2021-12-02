@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture">CAPTURE</string>
+    <string name="ocr_in_progress">OCR in progress...</string>
+    <string name="text_saved_to_lib">Text saved to library!</string>
+    <string name="go_to_lib">GO TO LIBRARY</string>
+    <string name="save_text_to_lib">SAVE TEXT TO LIBRARY</string>
+    <string name="back_to_lib_items">Back To Library Items</string>
+</resources>

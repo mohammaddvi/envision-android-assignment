@@ -29,7 +29,6 @@ abstract class BaseViewModel(val coroutineDispatcherProvider: CoroutineDispatche
             coroutine()
         }
 
-
     override fun onCleared() {
         super.onCleared()
         coroutineContext.cancelChildren()

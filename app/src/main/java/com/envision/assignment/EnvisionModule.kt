@@ -1,14 +1,15 @@
 package com.envision.assignment
 
 import android.app.Application
-import android.content.Context
 import androidx.room.Room
 import com.envision.assignment.network.EnvisionAPI
-import com.envision.assignment.repository.EnvisionRepository
-import com.envision.assignment.repository.RemoteEnvisionRepository
-import com.envision.assignment.roomtest.DocumentDao
-import com.envision.assignment.roomtest.EnvisionDatabase
+import com.envision.assignment.repository.*
+import com.envision.assignment.repository.offline.DocumentDao
+import com.envision.assignment.repository.offline.EnvisionDatabase
+import com.envision.assignment.repository.offline.InMemoryEnvisionRepository
+import com.envision.assignment.repository.online.RemoteEnvisionRepository
 import com.envision.assignment.usecase.ConcatParagraphsUseCase
+import com.envision.assignment.usecase.SaveDocumentUseCase
 import com.envision.assignment.usecase.UploadFileUseCase
 import com.envision.assignment.viewmodel.CaptureViewModel
 import com.envision.assignment.viewmodel.LibraryViewModel
@@ -20,7 +21,6 @@ import com.envision.core.network.AuthInterceptor
 import com.envision.core.network.provideOkHttpClient
 import com.envision.core.network.provideRetrofit
 import org.koin.android.ext.koin.androidApplication
-import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.create
@@ -42,7 +42,7 @@ val envisionDB = module {
 
 fun envisionModule() = module {
     viewModel {
-        CaptureViewModel(get(), get(), get(), get())
+        CaptureViewModel(get(), get(), get(), get(),get())
     }
     viewModel {
         LibraryViewModel(get(), get())
@@ -56,11 +56,17 @@ fun envisionModule() = module {
     factory {
         UploadFileUseCase(get())
     }
-    factory {
-        ConcatParagraphsUseCase(get())
+    factory{
+        SaveDocumentUseCase(get())
     }
-    factory<EnvisionRepository> {
+    factory {
+        ConcatParagraphsUseCase()
+    }
+    factory<OnlineEnvsionRepository> {
         RemoteEnvisionRepository(get())
+    }
+    factory<OfflineEnvisionRepository>{
+        InMemoryEnvisionRepository(get())
     }
     single { AuthInterceptor() }
 

@@ -1,10 +1,10 @@
 package com.envision.assignment.usecase
 
-import com.envision.assignment.repository.EnvisionRepository
+import com.envision.assignment.repository.OnlineEnvsionRepository
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 
-class UploadFileUseCase(private val envisionRepository: EnvisionRepository) {
+
+class UploadFileUseCase(private val envisionRepository: OnlineEnvsionRepository) {
     suspend fun execute(requestBody: MultipartBody.Part)=
         envisionRepository.requestOCR(requestBody)
 }

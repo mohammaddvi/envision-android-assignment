@@ -1,63 +1,78 @@
 package com.envision.assignment.view.screen
 
-import android.net.Uri
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.envision.assignment.CaptureScreenState
+import com.envision.assignment.R
+import com.envision.assignment.view.component.CameraCapture
 import com.envision.assignment.view.component.RequestPermissionToCamera
-import com.envision.assignment.view.component.cameraPreview
-import com.envision.assignment.view.component.takePhoto
+import com.envision.assignment.view.component.takePicture
+import com.envision.assignment.viewmodel.CaptureViewModel
+import com.envision.core.extension.state
 import com.envision.core.theme.EnvisionTheme
 import com.envision.core.theme.black
+import com.envision.core.theme.grayUnselected
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun CaptureScreen(
-    captureScreenState: CaptureScreenState,
-    onImageSaved: (Uri) -> Unit,
-    onImageCaptureException: (ImageCaptureException) -> Unit,
-    onPermissionGranted: () -> Unit,
-    onPermissionDenied: () -> Unit
+    modifier: Modifier = Modifier,
+    onButtonGoToLibraryClicked: () -> Unit
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
-    val cameraPreview = cameraPreview(lifecycleOwner, context, cameraProviderFuture)
+    val captureViewModel: CaptureViewModel = getViewModel()
+    val captureState = captureViewModel.state()
+
+    val imageCaptureUseCase by remember {
+        mutableStateOf(
+            ImageCapture.Builder()
+                .setCaptureMode(CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .build()
+        )
+    }
+
     val onCaptureClicked = {
-        takePhoto(cameraPreview.second, context, { onImageCaptureException(it) }, {
-            onImageSaved(it)
+        imageCaptureUseCase.takePicture(context, onError = {
+            captureViewModel.onImageCaptureException(it)
+        }, onImageSaved = {
+            captureViewModel.onImageSaved(it)
         })
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        when (captureScreenState) {
+
+    Box(modifier = modifier) {
+        when (captureState.value.captureScreenState) {
             is CaptureScreenState.Permission -> PermissionState(
-                onPermissionGranted,
-                onPermissionDenied
+                { captureViewModel.onPermissionGranted() },
+                { captureViewModel.onPermissionDenied() }
             )
-            is CaptureScreenState.Processing -> ProcessingState(cameraPreview.first)
-            is CaptureScreenState.ShowingResult -> ShowingResultState(captureScreenState.result)
-            is CaptureScreenState.Capturing -> CapturingState(cameraPreview.first, onCaptureClicked)
-            is CaptureScreenState.Error -> CapturingState(cameraPreview.first, onCaptureClicked)
+            is CaptureScreenState.ShowingResult -> ShowingResultState(
+                ocrResult = captureState.value.captureScreenState as CaptureScreenState.ShowingResult,
+                onSaveClicked = { captureViewModel.onSaveDocumentClicked() },
+                onGoToLibraryClicked = {
+                    onButtonGoToLibraryClicked()
+                    captureViewModel.onButtonGoToLibraryClicked()
+                }
+            )
+            is CaptureScreenState.Processing -> ProcessingState(imageCaptureUseCase)
+            is CaptureScreenState.Capturing -> CapturingState(imageCaptureUseCase,onCaptureClicked)
+            is CaptureScreenState.Error -> CapturingState(imageCaptureUseCase,onCaptureClicked)
         }
     }
 }
@@ -68,44 +83,71 @@ private fun PermissionState(onPermissionGranted: () -> Unit, onPermissionDenied:
 }
 
 @Composable
-fun ShowingResultState(ocrResult: String) {
-    Box(modifier = Modifier.fillMaxSize()) {
+fun ShowingResultState(
+    ocrResult: CaptureScreenState.ShowingResult,
+    onSaveClicked: () -> Unit,
+    onGoToLibraryClicked: () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = ocrResult,
+            text = ocrResult.result,
             modifier = Modifier
                 .fillMaxSize()
+                .weight(1f)
                 .padding(16.dp)
                 .background(color = EnvisionTheme.colors.onPrimary)
                 .verticalScroll(rememberScrollState(0)),
             color = EnvisionTheme.colors.black
         )
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 32.dp)
-                .fillMaxWidth(0.6f)
-                .clip(RoundedCornerShape(50.dp))
-                .height(50.dp)
-                .background(color = EnvisionTheme.colors.primary)
-        ) {
-            Text(
-                text = "SAVE TEXT TO LIBRARY",
-                modifier = Modifier.align(Alignment.Center),
-                color = EnvisionTheme.colors.onPrimary
-            )
+        if (ocrResult.resultIsSaved) {
+            Row(
+                modifier = Modifier
+                    .height(54.dp)
+                    .clickable { onGoToLibraryClicked() }
+                    .fillMaxWidth()
+                    .background(color = EnvisionTheme.colors.grayUnselected)
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.text_saved_to_lib),
+                    color = EnvisionTheme.colors.black
+                )
+                Text(
+                    text = stringResource(R.string.go_to_lib),
+                    color = EnvisionTheme.colors.primary,
+                )
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .clickable { onSaveClicked() }
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 32.dp)
+                    .fillMaxWidth(0.6f)
+                    .clip(RoundedCornerShape(50.dp))
+                    .height(50.dp)
+                    .background(color = EnvisionTheme.colors.primary)
+            ) {
+                Text(
+                    text = stringResource(R.string.save_text_to_lib),
+                    modifier = Modifier.align(Alignment.Center),
+                    color = EnvisionTheme.colors.onPrimary
+                )
+            }
         }
     }
 }
 
 @Composable
-fun CapturingState(previewView: PreviewView, onCaptureClicked: () -> Unit) {
+fun CapturingState(imageCapture: ImageCapture,onCaptureClicked: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
-        AndroidView(
-            factory = { previewView },
+        CameraCapture(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .clip(RoundedCornerShape(30.dp))
+                .clip(RoundedCornerShape(30.dp)),
+            imageCaptureUseCase = imageCapture
         )
         Box(
             modifier = Modifier
@@ -117,7 +159,7 @@ fun CapturingState(previewView: PreviewView, onCaptureClicked: () -> Unit) {
                 .background(color = EnvisionTheme.colors.primary)
                 .clickable { onCaptureClicked() }) {
             Text(
-                text = "CAPTURE",
+                text = stringResource(R.string.capture),
                 modifier = Modifier.align(Alignment.Center),
                 color = EnvisionTheme.colors.onPrimary
             )
@@ -126,14 +168,14 @@ fun CapturingState(previewView: PreviewView, onCaptureClicked: () -> Unit) {
 }
 
 @Composable
-fun ProcessingState(previewView: PreviewView) {
+fun ProcessingState(imageCapture: ImageCapture) {
     Box(modifier = Modifier.fillMaxSize()) {
-        AndroidView(
-            factory = { previewView },
+        CameraCapture(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .clip(RoundedCornerShape(30.dp))
+                .clip(RoundedCornerShape(30.dp)),
+            imageCaptureUseCase = imageCapture
         )
         Box(
             modifier = Modifier
@@ -144,7 +186,7 @@ fun ProcessingState(previewView: PreviewView) {
                 .background(color = EnvisionTheme.colors.primary)
         ) {
             Text(
-                text = "OCR in progress...",
+                text = stringResource(R.string.ocr_in_progress),
                 modifier = Modifier.align(Alignment.Center),
                 color = EnvisionTheme.colors.onPrimary
             )

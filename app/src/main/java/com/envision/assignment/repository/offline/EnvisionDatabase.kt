@@ -1,4 +1,4 @@
-package com.envision.assignment.roomtest
+package com.envision.assignment.repository.offline
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

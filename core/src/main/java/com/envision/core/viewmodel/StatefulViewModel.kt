@@ -10,9 +10,7 @@ abstract class StatefulViewModel<STATE : Any>(
     coroutineDispatcherProvider: CoroutineDispatcherProvider
 ) : BaseViewModel(coroutineDispatcherProvider) {
 
-    private val _internalLiveData = MutableLiveData<STATE>().apply {
-        value = initialState
-    }
+    private val _internalLiveData = MutableLiveData(initialState)
 
     fun stateLiveData(): LiveData<STATE> = _internalLiveData
     val currentState: STATE
@@ -21,6 +19,6 @@ abstract class StatefulViewModel<STATE : Any>(
         }
 
     fun applyState(function: STATE.() -> STATE) = runBlocking {
-        _internalLiveData.postValue(function(_internalLiveData.value!!))
+        _internalLiveData.postValue(function(currentState))
     }
 }

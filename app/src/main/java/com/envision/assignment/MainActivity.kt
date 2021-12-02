@@ -21,22 +21,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val captureViewModel: CaptureViewModel = getViewModel()
-            val libraryViewModel: LibraryViewModel = getViewModel()
-            val captureState = captureViewModel.state()
-            val libraryState = libraryViewModel.state()
             EnvisionTheme {
                 Surface(Modifier.fillMaxSize(), color = EnvisionTheme.colors.background) {
                     Column(Modifier.fillMaxSize()) {
-                        MainScreen(modifier = Modifier
-                            .fillMaxSize()
-                            .statusBarsPadding(),
-                            captureScreenState = captureState.value.captureScreenState,
-                            libraryState = libraryState.value.documents,
-                            onImageSaved = { captureViewModel.onImageSaved(it) },
-                            onImageCaptureException = { captureViewModel.onImageCaptureException(it) },
-                            onPermissionGranted = { captureViewModel.onPermissionGranted() },
-                            onPermissionDenied = { captureViewModel.onPermissionDenied() })
+                        MainScreen(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .statusBarsPadding(),
+                        )
                     }
                 }
             }

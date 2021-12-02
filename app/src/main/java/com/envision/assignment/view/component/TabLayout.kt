@@ -52,10 +52,10 @@ fun TabPager(
     modifier: Modifier = Modifier,
     tabItems: List<TabItem>,
     pagerState: PagerState,
-    onScreenUpdate: @Composable (Int) -> Unit
+    content: @Composable (Int) -> Unit
 ) {
     HorizontalPager(modifier = modifier, count = tabItems.size, state = pagerState) { index ->
-        onScreenUpdate(index)
+        content(index)
     }
 }
 
@@ -69,7 +69,7 @@ fun TabPreview() {
                 selectedTabIndex = 1,
                 tabsItems = tabsData,
                 onPageSelected = {})
-            TabPager(tabItems = tabsData, pagerState = rememberPagerState()){}
+            TabPager(tabItems = tabsData, pagerState = rememberPagerState()) {}
         }
     }
 }

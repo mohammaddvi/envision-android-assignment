@@ -3,6 +3,7 @@ package com.envision.assignment.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.envision.assignment.CaptureScreenState
 import com.envision.assignment.usecase.ConcatParagraphsUseCase
+import com.envision.assignment.usecase.SaveDocumentUseCase
 import com.envision.assignment.usecase.UploadFileUseCase
 import com.envision.core.errorhandling.ErrorParserImpl
 import com.envision.core.utils.TestUriBuilderWrapper
@@ -43,11 +44,15 @@ class CaptureViewModelTest {
     private lateinit var uriBuilderWrapper: TestUriBuilderWrapper
 
     @RelaxedMockK
+    private lateinit var saveDocumentUseCase: SaveDocumentUseCase
+
+    @RelaxedMockK
     private lateinit var errorParser: ErrorParserImpl
 
     private fun createCaptureViewModel() = CaptureViewModel(
         uploadFileUseCase,
         concatParagraphsUseCase,
+        saveDocumentUseCase,
         errorParser,
         createTestCoroutineDispatcherProvider(testCoroutineDispatcher)
     )
@@ -63,20 +68,20 @@ class CaptureViewModelTest {
     }
 
     @Test
-    fun `when user has done nothing yet then view model state should to not loaded`() =
+    fun `when user has done nothing yet then view model state should be permission`() =
         testCoroutineScope.runBlockingTest {
             val viewModel = createCaptureViewModel()
-            assertEquals(CaptureScreenState.Capturing, viewModel.currentState.captureScreenState)
+            assertEquals(CaptureScreenState.Permission, viewModel.currentState.captureScreenState)
         }
 
     @Test
-    fun `when user upload image then view model state should to loading`() =
+    fun `when user upload image then view model state should be processing`() =
         testCoroutineScope.runBlockingTest {
             coEvery {
                 uploadFileUseCase.execute(any())
             }.coAnswers {
                 delay(1000)
-                ocrResultModel
+                fakeOcrResultModel
             }
             val viewModel = createCaptureViewModel()
             viewModel.onImageSaved(uriBuilderWrapper.uriCreator())
@@ -84,41 +89,41 @@ class CaptureViewModelTest {
         }
 
     @Test
-    fun `when ocr result fetched successfully then view model state should to loaded with data`() =
+    fun `when ocr result fetched successfully then view model state should be showing result with data`() =
         testCoroutineScope.runBlockingTest {
             coEvery {
                 uploadFileUseCase.execute(any())
             }.coAnswers {
                 delay(500)
-                ocrResultModel
+                fakeOcrResultModel
             }
 
             coEvery {
                 concatParagraphsUseCase.execute(any())
             }.coAnswers {
-                ocrResultConcated
+                fakeOcrResultConcated
             }
 
             val viewModel = createCaptureViewModel()
             viewModel.onImageSaved(uriBuilderWrapper.uriCreator())
             delay(1000)
             assertEquals(
-                CaptureScreenState.ShowingResult(ocrResultConcated),
+                CaptureScreenState.ShowingResult(fakeOcrResultConcated),
                 viewModel.currentState.captureScreenState
             )
         }
 
     @Test
-    fun `when fetching ocr result failed then view model state should update to failed`() =
+    fun `when fetching ocr result failed then view model state should be error`() =
         testCoroutineScope.runBlockingTest {
             coEvery {
                 uploadFileUseCase.execute(any())
-            }.throws(envisionThrowable)
+            }.throws(fakeThrowable)
 
             coEvery {
                 concatParagraphsUseCase.execute(any())
             }.coAnswers {
-                ocrResultConcated
+                fakeOcrResultConcated
             }
 
             val viewModel = createCaptureViewModel()

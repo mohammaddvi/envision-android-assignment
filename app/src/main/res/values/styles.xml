@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="EnvisionTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimaryDark">#6200EE</item>
+        <item name="android:statusBarColor">#6200EE</item>
+    </style>
+</resources>

@@ -106,6 +106,8 @@ ext.libs = [
         kotlinTest                    : "org.jetbrains.kotlin:kotlin-test",
 
         //Database
-        room                          : "androidx.room:room-runtime:${versions.room}",
-        roomAnnorationProcessor       : "androidx.room:room-compiler:${versions.room}"
+        roomRuntime                   : "androidx.room:room-runtime:${versions.room}",
+        roomKtx                       : "androidx.room:room-ktx:${versions.room}",
+        roomCompiler                  : "androidx.room:room-compiler:${versions.room}",
+        roomCommon                    : "androidx.room:room-common:${versions.room}"
 ]
