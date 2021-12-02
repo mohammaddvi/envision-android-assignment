@@ -1,20 +1,21 @@
 package com.envision.core.errorhandling
 
-import com.envision.core.extension.error
 import retrofit2.HttpException
+import java.lang.NullPointerException
 import java.net.SocketTimeoutException
 
 class ErrorParserImpl : ErrorParser {
-    override fun parse(throwable: Throwable): String {
-        val error = throwable.error()
-        error?.let {
-            return if (it.message.isNotEmpty()) it.message
-            else "Unknown Error"
+    override fun parse(throwable: Throwable): EnvisionError {
+        if (throwable is NullPointerException){
+            return EnvisionError("there is no text")
         }
-        return if (throwable is SocketTimeoutException || throwable is HttpException)
-            "Response time is more than 60 seconds"
-        else if (throwable is SecurityException) "Security error in device"
-        else "Network is not accesible"
+        if (throwable is HttpException) {
+            if (throwable.code() == 404) return EnvisionError(message = "Api not found")
+            else if (throwable.code() == 500) return EnvisionError(message = "Server is ruined")
+        }
+        return if (throwable is SocketTimeoutException) EnvisionError("Response time is more than 60 seconds")
+        else EnvisionError("Unknown Error")
     }
-
 }
+
+data class EnvisionError(val message:String)

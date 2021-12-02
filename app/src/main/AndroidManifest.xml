@@ -3,6 +3,7 @@
     package="com.envision.assignment">
 
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -10,6 +11,7 @@
         <activity
             android:name="com.envision.assignment.MainActivity"
             android:exported="true"
+            android:label="Mohammad Assignment"
             android:theme="@style/EnvisionTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

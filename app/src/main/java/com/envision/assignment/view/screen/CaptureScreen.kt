@@ -1,8 +1,9 @@
 package com.envision.assignment.view.screen
 
-import android.util.Log
+import android.widget.Toast
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
+import androidx.camera.core.ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -44,7 +45,7 @@ fun CaptureScreen(
     val imageCaptureUseCase by remember {
         mutableStateOf(
             ImageCapture.Builder()
-                .setCaptureMode(CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .setCaptureMode(CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
         )
     }
@@ -72,8 +73,15 @@ fun CaptureScreen(
                 }
             )
             is CaptureScreenState.Processing -> ProcessingState(imageCaptureUseCase)
-            is CaptureScreenState.Capturing -> CapturingState(imageCaptureUseCase,onCaptureClicked)
-            is CaptureScreenState.Error -> CapturingState(imageCaptureUseCase,onCaptureClicked)
+            is CaptureScreenState.Capturing -> CapturingState(imageCaptureUseCase, onCaptureClicked)
+            is CaptureScreenState.Error -> {
+                Toast.makeText(
+                    context,
+                    (captureState.value.captureScreenState as CaptureScreenState.Error).error,
+                    Toast.LENGTH_LONG
+                ).show()
+                CapturingState(imageCaptureUseCase, onCaptureClicked)
+            }
         }
     }
 }
@@ -100,7 +108,7 @@ fun ShowingResultState(
                 .verticalScroll(rememberScrollState(0)),
             color = EnvisionTheme.colors.black
         )
-        if (ocrResult.resultIsSaved) {
+        AnimatedVisibility(ocrResult.resultIsSaved) {
             Row(
                 modifier = Modifier
                     .height(54.dp)
@@ -119,16 +127,17 @@ fun ShowingResultState(
                     color = EnvisionTheme.colors.primary,
                 )
             }
-        } else {
+        }
+        AnimatedVisibility(visible = !ocrResult.resultIsSaved) {
             Box(
                 modifier = Modifier
-                    .clickable { onSaveClicked() }
+                    .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 32.dp)
-                    .fillMaxWidth(0.6f)
+                    .padding(32.dp)
                     .clip(RoundedCornerShape(50.dp))
                     .height(50.dp)
-                    .background(color = EnvisionTheme.colors.primary)
+                    .clickable { onSaveClicked() }
+                    .background(color = EnvisionTheme.colors.primary),
             ) {
                 Text(
                     text = stringResource(R.string.save_text_to_lib),
@@ -141,7 +150,7 @@ fun ShowingResultState(
 }
 
 @Composable
-fun CapturingState(imageCapture: ImageCapture,onCaptureClicked: () -> Unit) {
+fun CapturingState(imageCapture: ImageCapture, onCaptureClicked: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         CameraCapture(
             modifier = Modifier

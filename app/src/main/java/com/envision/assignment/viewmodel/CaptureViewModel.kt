@@ -103,8 +103,9 @@ class CaptureViewModel(
                     copy(captureScreenState = CaptureScreenState.ShowingResult(result))
                 }
             }, {
+                Log.d("mogger","throwable is $it")
                 applyState {
-                    copy(captureScreenState = CaptureScreenState.Error(errorParser.parse(it)))
+                    copy(captureScreenState = CaptureScreenState.Error(errorParser.parse(it).message))
                 }
             })
         }
@@ -114,6 +115,6 @@ class CaptureViewModel(
         val file = File(uri.path!!)
         val requestFile: RequestBody =
             RequestBody.create(MediaType.parse("multipart/form-data"), file)
-            return MultipartBody.Part.createFormData("photo", file.name, requestFile)
+        return MultipartBody.Part.createFormData("photo", file.name, requestFile)
     }
 }
