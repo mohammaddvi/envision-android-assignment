@@ -15,7 +15,6 @@ dependencies {
     implementation libs.koinCore
     implementation libs.koinCompose
     implementation libs.mockk
-//    implementation libs.coroutinesTest
     implementation libs.junit
     implementation libs.kotlinTest
     implementation libs.archTesting
@@ -23,5 +22,6 @@ dependencies {
     implementation libs.roomRuntime
     implementation libs.roomKtx
     kapt libs.roomCompiler
+    testImplementation libs.coroutinesTest
 
 }

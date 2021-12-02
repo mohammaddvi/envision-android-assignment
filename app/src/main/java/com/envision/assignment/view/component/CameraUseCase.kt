@@ -6,7 +6,6 @@ import android.os.Environment
 import android.util.Log
 import android.view.ViewGroup
 import androidx.camera.core.*
-import androidx.camera.core.ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
@@ -26,55 +25,8 @@ import java.util.concurrent.Executor
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-fun cameraPreview(
-    lifecycleOwner: LifecycleOwner,
-    context: Context,
-    cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
-): Pair<PreviewView, ImageCapture> {
-    val imageCapture: ImageCapture = ImageCapture.Builder().build()
-
-    val previewView = PreviewView(context)
-
-    cameraProviderFuture.addListener({
-        val cameraProvider = cameraProviderFuture.get()
-        val previewUseCase = androidx.camera.core.Preview.Builder().build().also {
-            it.setSurfaceProvider(previewView.surfaceProvider)
-        }
-        val cameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-            .build()
-        try {
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                lifecycleOwner, cameraSelector, previewUseCase, imageCapture
-            )
-        } catch (ex: Exception) {
-            Log.d("mogger", "use case binding failed $ex")
-        }
-
-    }, ContextCompat.getMainExecutor(context))
-    return Pair(previewView, imageCapture)
-}
-
-fun takePhoto(
-    imageCapture: ImageCapture,
-    context: Context,
-    onError: (ImageCaptureException) -> Unit,
-    onImageSaved: (Uri) -> Unit
-) {
-    val outputOptions = ImageCapture.OutputFileOptions.Builder(getOutputDirectory(context)).build()
-    imageCapture.takePicture(
-        outputOptions,
-        ContextCompat.getMainExecutor(context),
-        object : ImageCapture.OnImageSavedCallback {
-            override fun onError(exc: ImageCaptureException) = onError(exc)
-            override fun onImageSaved(output: ImageCapture.OutputFileResults) =
-                onImageSaved(Uri.fromFile(getOutputDirectory(context)))
-        })
-}
-
 private fun getOutputDirectory(context: Context): File {
-    val mDateFormat = SimpleDateFormat("yyyyMMddHHmmss", Locale.US)
+    val mDateFormat = SimpleDateFormat("yyyyMMddHHmm", Locale.US)
     val file = File(
         context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
         mDateFormat.format(Date()).toString() + ".jpg"
@@ -124,7 +76,7 @@ fun CameraPreview(
 @Composable
 fun CameraCapture(
     modifier: Modifier = Modifier,
-    imageCaptureUseCase : ImageCapture,
+    imageCaptureUseCase: ImageCapture,
     cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 ) {
     Box(modifier = modifier) {

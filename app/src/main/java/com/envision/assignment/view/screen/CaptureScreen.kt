@@ -1,5 +1,6 @@
 package com.envision.assignment.view.screen
 
+import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
 import androidx.compose.foundation.background

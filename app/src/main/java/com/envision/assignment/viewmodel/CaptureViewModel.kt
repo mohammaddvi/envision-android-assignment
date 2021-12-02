@@ -1,6 +1,7 @@
 package com.envision.assignment.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.camera.core.ImageCaptureException
 import com.envision.assignment.CaptureScreenState
 import com.envision.assignment.usecase.ConcatParagraphsUseCase
@@ -110,8 +111,9 @@ class CaptureViewModel(
     }
 
     private fun preparingImageFile(uri: Uri): MultipartBody.Part {
+        val file = File(uri.path!!)
         val requestFile: RequestBody =
-            RequestBody.create(MediaType.parse("multipart/form-data"), File(uri.path!!))
-        return MultipartBody.Part.createFormData("photo", "uploadFile", requestFile)
+            RequestBody.create(MediaType.parse("multipart/form-data"), file)
+            return MultipartBody.Part.createFormData("photo", file.name, requestFile)
     }
 }
